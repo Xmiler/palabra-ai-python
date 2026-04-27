@@ -23,6 +23,7 @@ class PalabraAI:
     client_secret: str | None = field(default=CLIENT_SECRET)
     api_endpoint: str = "https://api.palabra.ai"
     session_credentials: SessionCredentials | None = None
+    session_id: str | None = field(default=None, init=False)
 
     def __post_init__(self):
         if not self.client_id:
@@ -232,6 +233,8 @@ class PalabraAI:
             )
             credentials = await rest_client.create_session()
             session_created_internally = True
+
+        self.session_id = credentials.id
 
         try:
             async with asyncio.TaskGroup() as tg:
