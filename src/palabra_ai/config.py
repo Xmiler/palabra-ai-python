@@ -541,6 +541,7 @@ class Config(BaseModel):
     eos_silence_s: SkipJsonSchema[float] = Field(
         default=EOS_SILENCE_S_ENV, exclude=True
     )
+    output_stream: SkipJsonSchema[dict | None] = Field(default=None, exclude=True)
 
     def __init__(
         self,
@@ -678,6 +679,8 @@ class Config(BaseModel):
         # data.pop("output_stream", None)
 
         result = {**data, **{"pipeline": pipeline}, **self.mode.model_dump()}
+        if "output_stream" in self.__pydantic_fields_set__:
+            result["output_stream"] = self.output_stream
         return result
 
     def to_dict(self, full: bool = False) -> dict[str, Any]:
