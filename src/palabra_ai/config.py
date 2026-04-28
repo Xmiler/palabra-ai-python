@@ -346,6 +346,7 @@ class SplitterAdvanced(BaseModel):
 
 class Splitter(BaseModel):
     enabled: bool = True
+    mode: str = "auto"
     splitter_model: str = "auto"
     advanced: SplitterAdvanced = Field(default_factory=SplitterAdvanced)
 
