@@ -342,6 +342,7 @@ class SplitterAdvanced(BaseModel):
     step_size: int = STEP_SIZE_DEFAULT
     max_steps_without_eos: int = MAX_STEPS_WITHOUT_EOS_DEFAULT
     force_end_of_segment: float = FORCE_END_OF_SEGMENT_DEFAULT
+    sat_enabled: bool = True
 
 
 class Splitter(BaseModel):
