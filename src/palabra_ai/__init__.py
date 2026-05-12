@@ -90,7 +90,8 @@ from palabra_ai.task.adapter.device import (  # noqa: F401
 from palabra_ai.task.adapter.dummy import DummyReader, DummyWriter  # noqa: F401
 from palabra_ai.task.adapter.file import FileReader, FileWriter  # noqa: F401
 
-__version__ = "0.6.11"
+from importlib.metadata import version as _meta_version
+__version__ = _meta_version("palabra-ai")
 
 __all__ = [
     # Client
