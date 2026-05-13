@@ -178,7 +178,7 @@ class WebrtcIo(Io):
             self.credentials.webrtc_url, self.credentials.jwt_token, self.room_options
         )
         self.room.on("data_received", self.on_data_received)
-        lang = self.cfg.targets[0].lang  # TODO: many langs
+        out_lang = self.cfg.targets[0].lang if self.cfg.targets else None
         self.peer = await self.peer_appears()
         debug(f"WebrtcIo.boot() creating in_msg_sender task for {self.name}")
         self.sub_tg.create_task(self.in_msg_sender(), name="Io:in_msg_sender")
@@ -191,7 +191,7 @@ class WebrtcIo(Io):
             error(f"WebrtcIo.boot() set_task() FAILED: {e}")
             raise
 
-        self.in_track_name = self.in_track_name or f"{uuid.uuid4()}_{lang.code}"
+        self.in_track_name = self.in_track_name or f"{uuid.uuid4()}_{self.cfg.source.lang.code}"
         # noinspection PyTypeChecker
         self.in_track_options.source = self.track_source
         self.in_audio_source = rtc.AudioSource(
@@ -204,10 +204,13 @@ class WebrtcIo(Io):
             self.in_track, self.in_track_options
         )
 
-        pub = await self.track_appears(lang)
-        self.out_track_publications[lang.code] = pub
-        self.out_tracks[lang.code] = pub.track
-        self.sub_tg.create_task(self.out_audio(lang), name=f"Io:out_audio({lang!r})")
+        if out_lang is not None:
+            pub = await self.track_appears(out_lang)
+            self.out_track_publications[out_lang.code] = pub
+            self.out_tracks[out_lang.code] = pub.track
+            self.sub_tg.create_task(
+                self.out_audio(out_lang), name=f"Io:out_audio({out_lang!r})"
+            )
 
     async def exit(self):
         if self.in_track:

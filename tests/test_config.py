@@ -308,7 +308,7 @@ def test_config_basic():
     """Test basic Config creation"""
     config = Config()
     assert config.source is None
-    assert config.targets is None  # targets is None initially, converted to [] during certain operations
+    assert config.targets == []
     assert config.preprocessing.enable_vad is True
     assert isinstance(config.mode, WsMode)
     assert config.silent is False
@@ -324,16 +324,10 @@ def test_config_with_source_and_targets():
     assert config.targets[1].lang.code == "fr"
 
 def test_config_single_target():
-    """Test Config with single target (not a list)"""
+    """Test Config with single target (not a list) — gets auto-wrapped."""
     source = SourceLang(lang=ES)
     target = TargetLang(lang=EN)
     config = Config(source=source, targets=target)
-    # model_post_init should have been called and converted single target to list
-    # But it seems the init process doesn't trigger it properly. Let's test what we get
-    assert config.targets == target  # Should be single target initially
-
-    # Force the conversion by calling model_post_init manually
-    config.model_post_init(None)
     assert isinstance(config.targets, list)
     assert len(config.targets) == 1
     assert config.targets[0] == target

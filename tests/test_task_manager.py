@@ -92,7 +92,7 @@ class TestManager:
         with pytest.raises(ConfigurationError) as exc_info:
             Manager(cfg=self.mock_config, credentials=self.mock_credentials)
 
-        assert "Only single target language supported" in str(exc_info.value)
+        assert "At most 1 target language supported" in str(exc_info.value)
 
     def test_init_invalid_reader_error(self):
         """Test error when reader is not a Reader instance"""

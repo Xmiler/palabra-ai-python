@@ -552,9 +552,16 @@ class Config(BaseModel):
         **kwargs,
     ):
         super().__init__(__from_init=True, **kwargs)
-        if not self.source:
+        # Inspect the local params, not `self.*`: model_post_init has already
+        # coerced the `targets` field default None → [], so `self.targets is
+        # None` is always False and a caller-supplied list would get dropped.
+        # The locals still distinguish "user passed nothing" (None) from
+        # "user passed []" (ASR-only) from "user passed [T]" (classic).
+        if source is not None:
             self.source = source
-        if not self.targets:
+        if targets is not None:
+            if isinstance(targets, TargetLang):
+                targets = [targets]
             self.targets = targets
         self._ensure_default_fields_are_set()
 
